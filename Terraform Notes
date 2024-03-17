@@ -1,0 +1,217 @@
+What is Terraform?
+
+
+
+What is Infrastructure as Code (IaC)?
+
+Categories of IaC tools:
+
+Ad Hoc scripts: Here the infrastructure is written in a shell script and is used by making API calls to the respective cloud providers to create the infrastructure. This method is just on the borderlines of being called as an IaC. 
+
+Configuration Management Tools: Tools like Ansible, Puppet and Chef these tools are apt at managing what software are running on an infrastructure and the configuration of the infrastructure where we have an on prem infrastructure and to manage that infra we can use the tools in order to configure the VMs on that infra and specify install and configur softwares and settigs through the comfiguration management tools. 
+
+Server Tempelating Tools: Server Tempelates are data based on which the new VM is instanciated in a cloud network. The VM is created based on that template. and any new data and code can also be added to the template so that when the new VM is created any new configs or commands are added to install any thing those things will be present in the VM when created. This way multiple copies of the Vm can be created based on the template
+
+Orchestratio tool: This is used to define how the code will be deployed on the infra for example Kubernetes. Rather than defien the infra itself. 
+
+Provisioning Tools: These are the tools which are used to provision the cloud resources in the infrastructure.Terraform comes in this category.   
+
+IaC tools can also be categorized under declarative and Imperative:
+
+Declarative-->
+-----------
+Declarative IaC tools are where the end state is defined like if we need 5 servers or a load balancer all these requirements are specified and the tool maked the API calls necessary to make this possible
+
+Imperative-->
+----------
+In Imperative tools on the other hand we will define what are the things we desire should happen and which is the sequece in which we desire it to happen. 
+
+
+Most of the tools like config managemet come under category the category of Imperative and there are utilites to make them more declarative and to increase reusability.  but most Provisioning tools come under the category of declarative  
+
+=====================================
+IaC Cloud provisioning tools avilable
+=====================================
+
+Cloud Specific --> Cloud Specific tools are IaC tools which are given by the cloud provides themsleves on their service which works only on their cloud platform to mamange the resources 
+like :
+Azure Resource Manager --> which is for Azure  or  Google Cloud Deployment Manager 
+Google Cloud Deployment Manager --> which works on GCP
+
+Cloud Agnostic --> Agnostic tools on the other hand are not cloud specific and are provided by third party IaC providers which and be used to set up infrastructure on any cloud environment or service with a API for the tool to interract with than the tool can be used on that cloud. This is very helpful if are usig multiple clouds in our infrastructure, specifically if we are trying to access another cloud from our present cloud where we are using our services
+like: Terraform and Pulumi
+
+==================
+Terraform Overview
+==================
+
+What is Terraform
+
+* Terraform is a tool for building, changing and versoning infrastructure safely and efficiently
+
+* Enables application software best practices to infrastructure --> like version control to the config files to better manage the infra
+
+* Compatible with multi cloud services --> on anything that has api to interract with it
+
+
+Config files > Version control (Git) > Terraform > Infrastructure setup
+
+Common Patterns in which the softwares are used
+
+Terraform + Ansible ==> 
+In this combination Terraform is used to set and provison the VMs in the infra and then Ansible can be used to used to configure the VMs with specfic requirements and to install the required softwares.  
+
+Terraform + Server Templating ==>
+In this combination Terraform can be used with a server templating tool (Eg: Packer) where the server templating tool will create an image based on which the VM instance will be provisioned. In this case we can not only have the required dependencides and softwares which we need preinsttalled in the VM but also the code and files we need to run can be built into the image. 
+
+Terraform + (Orchestration)Kubernetes ==> 
+In this case the terraform will provision the VMs and the Kubernetes will define how the code will be deployed and setup in the infra. It can be a self managed cluster. 
+
+======================
+Terraform architecture
+======================
+
+    
+	
+	-----\                                                              
+	|     |                                                                        This acts as a plug in which does the work of interracting throught the API
+	| --- |      --------------------------------------                            (All coulds have their own cloud provider)       
+	|     |                                            |                                  |
+	-------                                            |   -------------                  |
+	Terraform state=>                                  |   |           |           ----------------
+	The Config File which contains                     |   |           |           |              |
+	the present state of the infrastructure            |   | Terraform |           |              |
+	                                                   |---|   Core    |---------> |Cloud Provider|-------> Cloud 
+                                                       |   |           |           |              |
+	                                                   |   |           |           |              |
+	-----\                                             |   -------------           ----------------
+	|     |                                            |       |
+	| </> |      --------------------------------------        |
+	|     |                                                    V
+	-------                                                   The Terraform core is the very center of terraform
+	Terraform Config=>                                        which takes the two files and does the work of interracting 
+	This file holds the data for the fnal state               with cloud through the APIs to setup the infrastructure 
+	of the infrastructure
+	
+	
+===============================
+Setting Up AWS to use terraform
+===============================
+
+Step 1 : 
+--------
+Start by installing Terraform to Your Device
+
+Installation page --> https://developer.hashicorp.com/terraform/install?product_intent=terraform
+
+Step 2:
+-------
+AWS CLI installation
+
+Installation Page --> https://aws.amazon.com/cli/#:~:text=The%20AWS%20Command%20Line%20Interface,and%20automate%20them%20through%20scripts.
+
+Step 3:
+-------
+
+Configure and authenticate a User with AWS CLI
+
+Go to AWS and serach IAM
+Create a new User in the Users
+> Add the USER name. 
+> Depending upen need console access can be given by creatign I am user
+> Add user to a IAM group
+> In the AWS group add the required permission policies to define which services the user can have access to
+> Go To users > SElect User > Security credentials and create a new access key --> Downlaod the access key file
+
+Go to the manchine we want to use Terraform in and use command ==> aws configure -> To set up user credentials 
+
+PS C:\Users\alanm\OneDrive\Documents\Terraform> aws configure
+AWS Access Key ID [None]: xxxxxxxxxxxxxxxxxxxx                          |
+AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  |--> This data will be found in the access key when creating it
+Default region name [None]: ap-south-1                                   --> The default region to use in aws
+Default output format [None]: json  
+
+
+This configuration can be found in the Users>usename>.aws
+
+This credentials will be used by terraform to authenticate on our behalf to connect to aws
+
+
+A terraform code to create a simple basic aws ec-2 instance based in an image
+=============================================================================
+
+Terraform.tf --> The .tf is the extension for a terraform file
+------------
+terraform{  ------------------------------------------> to define the area for the terraform
+    required_providers{  -----------------------------> definition of the providers that we are going to use
+        aws={
+            source = "hashicorp/aws"
+            version = "~>5.0"
+        }
+    }      -------------------------------------------> The sepecify the provider we are using is aws 
+}          |
+provider "aws" {   -----------------------------------> To configure the provider
+  region="ap-south-1"  -------------------------------> Defining the region in which the aws is running
+}
+            ------------------------------------------> To define the type of resource we are going to create in this is case it is an aws-instance
+			|                 ------------------------> The name of the instance   
+			|                 |
+resource "aws_instance" "terraform_test" { -----------> The Resource
+  ami = "ami-04c59a200db840187"  ---------------------> The image to use to create the instance  
+  instance_type="t2.micro"       ---------------------> The type of machine to create              
+}                                                                                                   
+
+-------------------------------------------------------------------------------------------------------
+                                                                                                      |
+[How to create an Amazon Machine Image]                                                               | 
+---------------------------------------                                                               |
+                                                                                                      |
+Select the ec-2 instance to use for the create the and Actions > Images and template > Create Image   |
+                                                                                                      |
+-------------------------------------------------------------------------------------------------------
+
+Terraform Init
+
+When you run terraform init, it inspects the Terraform code you've written and determines the infrastructure provider you intend to interact with. Whether it's Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, or any other, terraform init will automatically download the corresponding provider plugin required to interact with your infrastructure provider.
+
+However, the three basic steps for using Terraform to create and distroy resources:
+
+Terraform init: initializes a working directory and downloads the necessary provider plugins and modules and setting up the backend for storing your infrastructure's state
+Command --> terraform init
+
+Terraform plan: creates a dry-run, determining what actions are necessary to achieve the desired state defined in the Terraform configuration files
+Command --> terraform plan
+
+Terraform apply: applies the changes required to reach the desired state of the configuration, thereby creating, modifying, or deleting the infrastructure resources as necessary.
+Command--> terraform apply
+
+Terraform distroy: To remove the resources that had been created through the terraform all
+Command--> terraform destroy
+
+Terraform Init
+==============
+
+When you run terraform init, it inspects the Terraform code you've written and determines the infrastructure provider you intend to interact with. Whether it's Amazon Web Services (AWS), Google Cloud Platform (GCP), Microsoft Azure, or any other, terraform init will automatically download the corresponding provider plugin required to interact with your infrastructure provider from the provider registery and put it in the working directory.
+
+after the $terraform init command is run the following is the folder structure of the project .terraform gets downloaded from the registery
+
+ tree -a
+.
+├── create.tf
+├── .terraform
+│   └── providers
+│       └── registry.terraform.io
+│           └── hashicorp
+│               └── aws
+│                   └── 5.41.0
+│                       └── windows_386
+│                           └── terraform-provider-aws_v5.41.0_x5.exe
+├── .terraform.lock.hcl   --------------------------------------------------------> The loack file contains the details of the spceific dependencides and that are installed 
+├── terraform.tfstate                                                               in the workspace
+└── terraform.tfstate.backup
+
+Terraform Destroy
+=================
+
+Terrafrom destroy is used to clear everything in the state file and to clea up the whole infrastrure
+Never use until and unless yo want to remove the whole infra
