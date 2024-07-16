@@ -25,7 +25,7 @@ random_pet -> random indicates that we will be using the random provider here an
 
 The "random" provider allows the use of randomness within Terraform configurations. This is a logical provider, which means that it works entirely within Terraform's logic, and doesn't interact with any other services.
 
-We are using three examples in this argument:
+We are using three arguments in this example:
 
 prefix - which will prefix the random result
 seperator - seperator will be added between the prefix and the random word generator
