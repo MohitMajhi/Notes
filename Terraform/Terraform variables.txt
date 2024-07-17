@@ -1,0 +1,270 @@
+Using Input Variables
+---------------------
+
+To promote reusability of code instead of using hardcoaded argument values in terraform we can use input variables instead.
+
+To use variables in terraform we can create a .tf file containing the yarables and the defining the values in it such as
+
+variables.tf
+============
+			  -----------------------This is the variable NAME (it can be named anything but it is preferable to use the attribute name for which it is going to be used for better recognition) 
+			  |
+			  v
+variable "filename" {
+default = "/root/pets.txt"  <--------This refers to the deafult value to be used by the variable and is one of the methods to initalize the variable
+}
+variable "content" {
+default = "We love pets!"
+}
+To use the variable in the main.tf just use var .< variable_name> in place of the value
+
+Main.tf
+
+resource "local_file" "pet" {
+filename =var.filename
+content = var.content
+}
+
+So whenever we desire to change the values we need not change the main.tf but instead change
+the values of the variable in variables.tf
+
+Understanding the variable block
+
+The variable block is generally composed of three types of arguments.
+
+default -> This holds the default value for the variable to hold
+type -> the type of value the variable will hold
+description -> the description of the variable
+
+Type and description are not compulsory to be used but it is a good practice to use it.
+
+Eg
+
+variable "filename" {
+default ="/root/pets.txt"
+type = string  ------------------------------------> This is of type string
+description = "the path of local file"
+}
+
+
+variable "length" {
+default = 2
+type = number    ---------------------------> This is of type number
+description = "length of random value"
+}
+
+The value types which can be used are:
+
+
++========+=================================================================+
+|  Type  |                             Example                             |
++========+=================================================================+
+| string | "/type/pets.txt"                                                |
++--------+-----------------------------------------------------------------+
+| Number | 1                                                               |
++--------+-----------------------------------------------------------------+
+| bool   | True/False                                                      |
++--------+-----------------------------------------------------------------+
+| any    | If no type is defined terraform sets the type to any by default |
++--------+-----------------------------------------------------------------+
+| list   | ["cat","dog"]                                                   |
++--------+-----------------------------------------------------------------+
+| Map    | Pet1 = cat                                                      |
+|        | Pet2 = dog                                                      |
++--------+-----------------------------------------------------------------+
+| object | Complex data structure                                          |
++--------+-----------------------------------------------------------------+
+| tuple  | Complex data structure                                          |
++--------+-----------------------------------------------------------------+
+
+
+Using list type:
+
+The list is a numbered set of elements which means that all the elements of the list can be accessed through their index
+
+For the list ["cat","dog"]
+
+Cat is at index 0 and dog is at index 1 and so on.
+
+So if we use the list as shown below.
+
+variable "prefix" {
+default = ["Mr","Mrs","Sir"] --- > Here we have defined the elements of the list
+type = list ---------------------> Here we have defined the type as list
+}
+
+So the values of the list can be accessing the main.tf by their index as shown below.
+
+Main.tf
+
+Resource "random_pet" "my-pet" {
+prefix =var.prefix[0]  --- > here we are referring to the index 0 of the prefix list value
+}                            ie Mr
+
+
+When using list we can constrain the type of the list as such:
+
+variable "prefix" {
+default = ["Mr","Mrs","Sir"]
+type = list(string)      -------- > here the list can have values only of type string
+}
+
+
+variable "prefix" {
+default = [1,2,3]
+type = list(number) --- > This list can only be of type number
+}
+
+
+If we try to use any other type from what is given in the list it will throw an error in the plan
+
+variable "prefix" {
+default = ["Mr","Mrs","Sir"]
+type = list(number)            -- > this will not work as the list type is number but
+}                                   the list contains string
+
+
+
+Using Map type:
+===============
+
+We using type map we can store the values in a key value format and access the data in main.tf through the key value
+
+variable file-content {
+	type = map        -> using type map
+	default = {
+		"statement1" = "we love pets1"
+		"statement2" = "we love animals"
+	}        ^                 ^ 
+}            |                 |
+            Key              Value
+
+
+Now we can use the key to access the value
+
+Main.tf
+
+resource "local_file" "my-pet" {
+filename = "/root/pets.txt"
+content = var.file-contnent["statement2"]
+}
+
+Here as we the referencing the statement2 key the value that will replace it will be "we love
+animals"
+
+Similarly how we can constrain type in list we can do that for map as well.
+
+Variable "cats" {
+default = {
+"color" = "brown"
+"name" = "bella"
+}
+type =map(string) -> here the valse for the key can only be string
+}
+
+Variable "cats" {
+default = {
+"color" = 1
+"name"= 2
+}
+type =map(number) -> here the valse for the key can only be number
+}
+
+
+Set:
+
+Sets function exactly the same as a list but with one difference that that sets cant have duplicate values
+
+The below will be a good example of set:
+
+variable "prefix" {
+default = ["Mr","Mrs","Sir"]
+type = set(string)
+}
+
+The below will not work in set
+
+variable "prefix" {
+default = ["Mr","Mrs","Sir", "Sir"]
+type = set(string)
+}
+
+Using object variable:
+
+When using object variables we can create a complex object which can be a combination of all the other data types from which we can retrieve any of the desired values.
+
+Variables.tf
+
+variable "bella" {   -------------
+type = object ({                 |
+name = string                    |
+color = string                   |
+age = number                     |---------- Declaration of the object with all the variables used in the object of different variable types
+food = list(string)              |
+fav_pet = bool                   |
+)}      --------------------------
+
+default = {            ----------
+name = "bella"                  |
+color = "brown"                 |
+age = 7                         |------------ Declaration of the object with the values
+food = ["fish", "turkey"]       |
+fav_pet =true                   |
+}    ---------------------------|                           
+}
+
+
+
+Tuples
+
+Tuples are similar to list but in tuple we can add elements with different data types
+
+Varible kitty {
+type = tuple([string,number,bool]) -> Here we mention in the tuple which data types will
+default = ["cat",7,.true]             be present
+}
+
+The number of elements should be the exact same as the datatypes defined and should correspond to the placement of the data types
+
+For eg the below will give error as the extra element has not been defined of which type it is.
+
+Varible kitty {
+type = tuple([string,number,bool])
+default = ["cat",7.true,"dog"]
+}
+
+Various ways of using variables in terraform
+
+The default argument in the variable file is optional we can leave the variable block empty if we want
+
+
+variable "filename" {
+}
+Variabel "content" {
+}
+But in this case we will have to have to pass the values for the variable in the terminal one by one while running apply in an interactive manner.
+
+If we don't want to enter the values one by one we can directly enter the values through the command line as shown below.
+
+terraform apply -var "filename=/root/pets" -var "content=hi"
+
+Or we can set the variable in the command line as such
+
+$ export TF_VAR_filename="/root/pets.txt"
+$ export TF_VAR_content="hi"
+$ terraform apply
+
+Or we can store the values for the variables in a separate terraform.tfvars file.
+The variables file must be a .tfvars or .tfvars.json file and the file name should always be terraform
+
+If any other name is used the file will need to be passed as an argument when running apply
+
+terraform apply -var-file variable.tfvars
+
+Files named *. auto.tfvars and *. auto.tfvars.json will get automatically loaded.
+
+Priority order for different types of variable assignment
+
+With the different types of variable assignment methods if multiple methods are used to declare the variables then the most priority will be given to and used in the below mentioned order
+
+command line flag (-var or -var-file) > *.auto.tfvars files in alphabetical order > terraform.tfvars > and ( TF_VAR_*) Environment Variables with the least priority 
