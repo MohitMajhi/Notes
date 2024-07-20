@@ -34,3 +34,46 @@ gcloud kms keys versions get-public-key key-version \
     --keyring key-ring \
     --location location  \
     --output-file public-key-path
+	
+	
+Digital Signature
+=================
+
+A digital signature is a mathematical technique used to validate the authenticity and integrity of a message, software or digital document.
+
+In this method we will use a hashing algorithm on the file to hash it and then encrypt it using out private key and the result we will get will be called a digital signature.
+
+Then if we send this file to anyone the file can be verified by the other person by. 
+first the file can can be hashed by using the same hasing method 
+and then the public key can be used to decrypt the digital signature. 
+After that if we try to matched the hashed file and the decrypted digital signature and if they match that would mean that there has been no tampering in the file. 
+
+To use digital signature when creating key we nned to select Purpose as Assymetric sign.
+
+Gcloud command to create the digital signature
+
+gcloud kms asymmetric-sign \
+    --version key-version \
+    --key key \
+    --keyring key-ring \
+    --location location \
+    --digest-algorithm digest-algorithm \
+    --input-file input-file \
+    --signature-file signature-file
+	
+	
+Command to get the public key from command line
+
+gcloud kms keys versions get-public-key key-version \
+    --key key \
+    --keyring key-ring \
+    --location location \
+    --output-file output-file
+	
+Command to authenticate the file
+
+openssl dgst \
+    -sha256 \
+    -verify public-key-file \
+    -signature signature-file \
+    message-file
