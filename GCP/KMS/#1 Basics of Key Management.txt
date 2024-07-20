@@ -36,3 +36,12 @@ gcloud kms decrypt \
     --location location  \
     --ciphertext-file file-path-with-encrypted-data \
     --plaintext-file file-path-to-store-plaintext
+	
+Here we are using a symmetric key to do the encryption and Decrypring the files
+
+Symmetric keys:
+--------------
+
+In a Symmetric key cryptiography a single key is used for both encryption and to decrpyt the file.
+
+

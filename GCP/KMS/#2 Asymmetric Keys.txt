@@ -1,0 +1,36 @@
+Public Key Cryptography or Asymmetric Cryptography:
+---------------------------------------------------
+
+It is a cryptographic system that uses pairs of keys. Each pair consists of a public key (which may be known to others) and a private key (which may not be known by anyone except the owner).
+
+In this method we can use the keys in two ways: Encryption and Digital Signature
+
+Encryption:
+==========
+
+In the encryption method a key pair can be generated and the public key can be shared to anyone who would be encrypting the file. 
+
+Then they can share the encrypted-data to anyone. But only the person who will have the private key will be able to decrpyt the file.
+
+
+We can generate asymmetric key by defining assymetric decrypt this will define it as assymetric encryption key and after it is generated we can get the public key fromm it. 
+
+We can use the below command to encrypt data using ssl using pravate key we get form kms
+
+openssl pkeyutl -in cleartext-data-input-file \
+    -encrypt \
+    -pubin \
+    -inkey public-key-path \
+    -pkeyopt rsa_padding_mode:oaep \
+    -pkeyopt rsa_oaep_md:sha256 \
+    -pkeyopt rsa_mgf1_md:sha256 \
+    > encrypted-data-output-file
+	
+
+And the below command can be used to decrpyt the encrypted-data using the kms key.
+
+gcloud kms keys versions get-public-key key-version \
+    --key key \
+    --keyring key-ring \
+    --location location  \
+    --output-file public-key-path
