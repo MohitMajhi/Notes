@@ -1,0 +1,38 @@
+A cloud Key Management System (KMS) is a coloud service which helps you manage your symmetric and asymmetric keys keys
+
+In a KMS we have a keyring which is used to organize keys within a specific geographic region.
+
+The keys can be categorized into three types:
+
+Generated Keys
+Imported keys
+Externally Managed Keys
+
+To create keys go to 
+Security > Key Manegement
+
+When creating the keys we need to be careful that the keys should be created in the same region as the resources.
+
+And while creating the resource we want to encrypt select CMEK in Data Encrypt and select the key we want to use. 
+
+CMEK - Customer Managed Encryption Key
+
+Commnds to encrypt and decrpyt files using KMS
+
+Command to encrypty 
+
+gcloud kms encrypt \
+    --key key \
+    --keyring key-ring \
+    --location location  \
+    --plaintext-file file-with-data-to-encrypt \
+    --ciphertext-file file-to-store-encrypted-data
+	
+Command to Decrypt 
+	
+gcloud kms decrypt \
+    --key key \
+    --keyring key-ring \
+    --location location  \
+    --ciphertext-file file-path-with-encrypted-data \
+    --plaintext-file file-path-to-store-plaintext
