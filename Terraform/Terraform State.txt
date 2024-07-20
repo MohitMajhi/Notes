@@ -1,0 +1,17 @@
+What is Terraform state?
+
+Terraform logs information about the resources it has created in a state file. This enables Terraform to know which resources are under its control and when to update and destroy them.
+ The terraform state file, by default, is named terraform.tfstate and is held in the same directory where Terraform is run. 
+
+The actual content of this file is a JSON formatted mapping of the resources defined in the configuration and those that exist in your infrastructure. It contains every details of the resources including list of providers and everything.
+When Terraform is run, it can then use this mapping to compare infrastructure to the code and make any adjustments as necessary.
+
+Whenever a terraform plan is run it will refresh the state and check if there are any changes that have been made which do not match the state file.
+If the plan is being run for the first time there will be no state file present, as well as in the apply phase it will refresh the state file at the beginning of the apply execution and check for the state file.
+As during the first run the state file is not present it will get created.
+
+Only after the apply will run for the first time the terraform.tfstate file will get created. 
+ 
+If there are no changes to the state of the resources the apply will provide the last resource id and there will be no changes made.
+ 
+Every change is referenced to by an id.
