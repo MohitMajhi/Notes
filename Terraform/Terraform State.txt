@@ -1,17 +1,54 @@
-What is Terraform state?
+Terraform State
+================
 
-Terraform logs information about the resources it has created in a state file. This enables Terraform to know which resources are under its control and when to update and destroy them.
- The terraform state file, by default, is named terraform.tfstate and is held in the same directory where Terraform is run. 
+Terraform maintains information about the resources it manages in a state file. This state file is essential for Terraform to understand which resources it controls and to determine when updates or deletions are necessary.
+By default, the state file is named terraform.tfstate and is located in the same directory where Terraform is executed.
 
-The actual content of this file is a JSON formatted mapping of the resources defined in the configuration and those that exist in your infrastructure. It contains every details of the resources including list of providers and everything.
-When Terraform is run, it can then use this mapping to compare infrastructure to the code and make any adjustments as necessary.
+Key Points
+State File Content:
 
-Whenever a terraform plan is run it will refresh the state and check if there are any changes that have been made which do not match the state file.
-If the plan is being run for the first time there will be no state file present, as well as in the apply phase it will refresh the state file at the beginning of the apply execution and check for the state file.
-As during the first run the state file is not present it will get created.
+The state file is a JSON-formatted mapping of the resources defined in the Terraform configuration and the actual resources in your infrastructure.
+It includes details of the resources, such as their IDs, the list of providers, and metadata including dependencies.
 
-Only after the apply will run for the first time the terraform.tfstate file will get created. 
- 
-If there are no changes to the state of the resources the apply will provide the last resource id and there will be no changes made.
- 
-Every change is referenced to by an id.
+Every change and resource is referenced to by an id.
+
+State File Creation and Updates:
+--------------------------------
+
+When Terraform is run for the first time, there is no state file. It gets created after the first terraform apply execution.
+During subsequent runs, Terraform refreshes the state file by comparing the current state of the infrastructure with the state file and making any necessary adjustments.
+The terraform plan command refreshes the state file to check for any changes that do not match the state file. If the state file already exists, it uses it to compare the current infrastructure state against the desired state defined in the configuration.
+Execution Plans and State Drift:
+
+Terraform uses the state file to create execution plans by mapping the resource configuration to the real-world conditions.
+If there is a drift between the resources and the real-world conditions, Terraform will create an execution plan to rectify it.
+
+Resource Metadata:
+------------------
+
+The state file holds metadata for resources, including their dependencies. This is particularly useful when deleting resources, as it allows Terraform to know the order of deletion based on dependencies.
+Benefits of Terraform State
+
+Performance:
+------------
+The state file improves performance by reducing the need to refresh the actual state of resources. Terraform can simply read the state from the state file.
+To avoid refreshing the state file, you can use the command:
+
+terraform plan --refresh=false
+
+Collaboration:
+--------------
+For collaborative environments, storing the state file locally can lead to conflicts. It's better to store the state file in a remote backend (e.g., a cloud service) to avoid these issues.
+
+
+
+Terraform treats the state file as a single truth for reference for the real world architecture.
+
+The state file contains every little detail regarding the infrastructure; including any sensitive informtaion. This it is very important to make sure that the state file is 
+stored in a secure place.
+
+A terraform direcory is composed of the state files and the configuration files. 
+
+When working with multiple collaborators it is better to store terraform configuration files in remote version control repositiories like github or gitlab
+
+But since the state file holds sensitive data it is not secure to store it in remote repositiories; instead it can be stored in s3 buckets, or gcp cloud storage or terraform storage.
