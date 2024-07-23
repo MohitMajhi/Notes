@@ -1,0 +1,67 @@
+Mutable Infrastructure
+======================
+
+Definition:
+Mutable infrastructure refers to IT systems where servers and other infrastructure components are manually updated, configured, and modified. In these systems, changes are often made directly to the existing infrastructure, which can lead to inconsistencies and a more complex management process over time.
+
+Characteristics:
+
+Manual Updates: Infrastructure components are updated by making direct changes to the existing system.
+State Changes: Servers and configurations can have various states due to incremental updates and modifications.
+Potential Drift: There's a risk of configuration drift, where the actual state of the infrastructure deviates from the desired state over time. As; if there is any server which fails to get updated or the under lying OS changes. It is possible that multiple components running the same version let us say for high availability may have different configurations. 
+Flexibility: Provides flexibility to make quick, ad-hoc changes as needed.
+Complexity: Can become complex and difficult to manage, especially in large-scale environments.
+
+Examples:
+---------
+Traditional IT environments where system administrators manually update software, apply patches, and configure settings.
+Servers that are manually configured and maintained over time.
+
+Immutable Infrastructure
+========================
+
+Definition:
+Immutable infrastructure is a paradigm where servers and other infrastructure components are never modified after they are deployed. Instead, any updates or changes require provisioning new instances with the desired configuration, and the old ones are decommissioned.
+
+Characteristics:
+
+No Manual Changes: Infrastructure components are not updated or modified once they are deployed.
+Consistent State: Each deployment is identical and consistent, reducing the risk of configuration drift.
+Version Control: Infrastructure is typically managed through version-controlled code, often using Infrastructure as Code (IaC) tools.
+Reliability: Leads to more predictable and stable environments.
+Scalability: Easier to scale since new instances can be provisioned with a known good configuration.
+
+Examples:
+---------
+Deploying a new version of an application by creating a new server image (e.g., Amazon Machine Image) and replacing old instances with new ones.
+Using containerization technologies like Docker, where each container is an immutable snapshot of the application and its environment.
+
+Key Differences:
+================
+
+Update Process:
+---------------
+
+Mutable: Direct updates to existing infrastructure.
+Immutable: Deploy new instances and discard old ones for updates.
+
+Consistency:
+------------
+
+Mutable: Risk of inconsistencies and configuration drift.
+Immutable: Consistent and predictable deployments.
+
+Management Complexity:
+----------------------
+
+Mutable: Can become complex with manual changes and state management.
+Immutable: Simplifies management by treating infrastructure as disposable and reproducible.
+
+Tools and Practices:
+--------------------
+
+Mutable: Often relies on traditional system administration practices.
+Immutable: Utilizes modern DevOps practices and tools like Infrastructure as Code (IaC) and containerization.
+
+
+Terraform works with an Immutable Infrastructure setting as every resource gets destroyed and reprovisoned whenever any changes are made.
