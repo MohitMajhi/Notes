@@ -23,6 +23,9 @@ resource "aws_instance" "example" {
   }
 }
 
+not in every case should the create_before_destroy before destroy be used as in cases like: If we try to create a file before destroying it as it will be performed to the same 1 id
+the same folder will be created and than destroyed. resulting with there being no files.
+
 prevent_destroy
 ---------------
 
