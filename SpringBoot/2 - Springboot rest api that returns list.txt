@@ -1,0 +1,54 @@
+To create a rest API that returns list we will be a new function with get mapping to to retuen the list of students 
+Using the Student bean we created previously
+
+
+package spring.project.springboot.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import spring.project.springboot.bean.Student;
+
+@RestController
+public class StudentController {
+
+    @GetMapping("student")
+    public Student getStudent(){
+        Student student = new Student(1, "Alice", "Kaiser");
+        return student;
+    }
+
+    @GetMapping("students")
+    public List<Student> getStudents(){                  --> Function to return the list thus thereturn type here is List<Student>
+        List<Student> students = new ArrayList<>();      --> Here we created a ArrayList with Students as the object for the List  
+        students.add(new Student(1, "Mohit", "Majhi"));  --> Here we are adding new Student objects to the list while passing the constructor peremeters
+        students.add(new Student(2, "Sarkar", "Murmu"));
+        students.add(new Student(3, "Nitu", "Tudu"));
+        return students;
+    }
+
+}
+
+
+When the path http://localhost:8080/students is accessed the output is got as JSON data:
+
+[
+  {
+    "id": 1,
+    "firstName": "Mohit",
+    "lastName": "Majhi"
+  },
+  {
+    "id": 2,
+    "firstName": "Sarkar",
+    "lastName": "Murmu"
+  },
+  {
+    "id": 3,
+    "firstName": "Nitu",
+    "lastName": "Tudu"
+  }
+]

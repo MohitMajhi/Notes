@@ -1,0 +1,35 @@
+Sometimes the client will send a query which is called a Query parameter and looks like. 
+
+http://localhost:8080/student/query?id=1
+
+The @RequestParam Annotation is used to extract query parameters from a request URI
+
+@GetMapping("/student/query") --> When a query is made with a parameter the parameter gets added as ?<parameter>=<value>
+    public Student getRequestVariable(@RequestParam int id) --> The request param annotaion is used to bind the variable the varible in which we want to store the  query data to the query parameter in the URI 
+    {
+        return new Student(id, "Nitu", "Tudu");
+    }
+	
+--------------------
+
+Eg of using RequestParam with multiple request parameters in the URL which would look as below. 
+
+http://localhost:8080/student/query?id=1&firstName=Alice&lastName=Kiser
+
+@GetMapping("/student/query")
+     public Student getRequestVariable(@RequestParam int id, @RequestParam String firstName , @RequestParam String lastName)
+     {
+         return new Student(id, firstName, lastName);
+     }
+	 
+-----------------------
+
+Just like path variable in request parameter we can bind a different variable name to a parameter
+
+Example below:
+
+@GetMapping("/student/query")
+    public Student getRequestVariable(@RequestParam("id") int studentId,@RequestParam("firstName") String studentFirstName , @RequestParam("lastName") String studentLastName)
+    {
+        return new Student(studentId, studentFirstName, studentLastName);
+    }

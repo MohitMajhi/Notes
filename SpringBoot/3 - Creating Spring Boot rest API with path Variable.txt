@@ -1,0 +1,24 @@
+Sometimes we need to get data from the called path and use it in our function for this spring boot provides us with the annotation @PathVariable to get the data from the path. 
+
+@GetMapping("/student/{id}")  --> Here the {id} is a variable which is to be sent by the client that menas the id value will be replaced like http://localhost:8080/student/1 and this {id} varibale is referred to as a URI template varibale
+    public Student getStudentbyId(@PathVariable int id){  --> The int id here is the actual variable which accepts the data from the {id} and now can be used in the code. 
+	                                                          The @PathVariable annotation is used to bind the int id and {id} --> URI template variable
+                                                              The URI Template Variable name and the path Variable name should be same so that they can be bound															  
+        return new Student(id, "Nitu", "Tudu");
+    }
+	
+	
+Id we want to bind a URI template varible with a Path Variable with a different name we need to mention it with the path Variable  
+
+@GetMapping("/student/{id}")
+    public Student getStudentbyId(@PathVariable("id") int studentId){ --> Here we have mentioned the Path Variable which will replace the URI template variable
+        return new Student(studentId, "Nitu", "Tudu");
+    }
+	
+
+Eg - For Using multiple path variable
+
+@GetMapping("/student/{id}/{first-name}/{last-name}")
+    public Student getStudentbyIdName(@PathVariable("id") int studentId , @PathVariable("first-name")String firstName , @PathVariable("last-name") String lastName){
+        return new Student(studentId, firstName, lastName);
+    }

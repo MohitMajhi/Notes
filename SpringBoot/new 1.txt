@@ -1,0 +1,123 @@
+Spring Boot Notes
+
+Creating a Spring Boot Application which returns a JSON response.
+
+--------------------------
+SpringbootApplication.java   --> This is the file which has the main file where the Java code executor starts
+--------------------------
+
+package spring.project.springboot;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringbootApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringbootApplication.class, args);
+	}
+
+}
+
+
+In order to return a Json data from the spring applicayin we will be creating a controller class. 
+
+Controller -> Controllers in Spring Boot are Java classes responsible for handling incoming HTTP requests and returning an appropriate response. They act as intermediaries between the client (usually a web browser or a mobile app) and the application's business logic.
+
+Controller > HelloWorldController.java --> This is the file which holds the controller code.
+             --------------------------
+
+package spring.project.springboot.controller;
+
+// import org.springframework.stereotype.Controller;
+// import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+
+// @Controller  --> This declares a class as a controller class 
+// @ResponseBody  --> This tells the class to send the response as JSON objects to the HTTP requests
+
+@RestController //Within the rest controller we create the REST API. The Rest controller is a combination of the @controller and the @REesponse body
+public class HelloWorldController {
+    // Here the rest API is created
+    // HTTP get requests
+    //http:localhost:8080/hello-world
+
+    // We use @GetMapping annotation to map HTTP Get requests onto specific handler methods
+    @GetMapping("/hello-world")
+    public String helloWorld() {
+        return "Hello World";  --> When we go to the url we see the returned test as the brouser output. 
+    }
+    
+}
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Now to create a spring boot project which reurns a Java bean
+============================================================
+
+Below is the bean class which will get the details when the data is sent to the constructor and then form the resulting object in Json format hich will be returned to the HTTP request
+
+package spring.project.springboot.bean;
+
+public class Student {
+    private int id;
+    private String firstName;
+    private String lastName;
+
+    public Student(int id, String firstName, String lastName) {  --> Constructor function
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    
+	// Setter and Getters
+	
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+}
+
+
+Controller > StudentController.java  --> This controller is responsible for returning the student details
+
+
+package spring.project.springboot.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import spring.project.springboot.bean.Student;
+
+@RestController
+public class StudentController {
+
+    @GetMapping("student") --> The GET Mapping for the URL. 
+    public Student getStudent(){
+        Student student = new Student(1, "Alice", "Kaiser");  --> Creating a new student object and passing the values to the constructor
+        return student;  --> Returning the student object to be displayed when the mapped URL is called
+    }
+
+}
