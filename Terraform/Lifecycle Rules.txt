@@ -1,0 +1,98 @@
+Lifecycle Rules
+===============
+
+Terraform, lifecycle rules are part of the resource configuration that control how Terraform manages the creation, update,and deletion of resources. These rules are specified 
+using the 'lifecycle' block within a resource definition. The 'lifecycle' block can contain several meta-arguments to customizethe behavior of resource management.
+
+Lifecycle meta-arguments 
+
+create_before_destroy
+---------------------
+
+Description: Ensures that a new resource is created before the old resource is destroyed.
+Use Case: Useful when replacing resources that need to maintain availability during updates.
+
+Example:
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+prevent_destroy
+---------------
+
+Description: Prevents Terraform from destroying the resource. This is useful for protecting critical resources from accidental deletion.
+Use Case: Ideal for resources that should never be deleted, such as databases containing important data.
+
+Example:
+
+resource "aws_s3_bucket" "example" {
+  bucket = "my-bucket"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+ignore_changes
+--------------
+
+Description: Tells Terraform to ignore changes to specific attributes of a resource. This can be useful when certain attributes are managed outside of Terraform or should not trigger an update.
+Use Case: Avoiding updates to specific attributes that might be managed manually or by another system.
+
+Example:
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  user_data     = "initial setup script"
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+}
+
+replace_triggered_by
+--------------------
+
+Description: Forces replacement of a resource when another resource or attribute changes. This is useful for situations where a dependent resource must be recreated if a specific condition changes.
+Use Case: When a resource must be replaced if an associated resource or attribute changes.
+
+Example:
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+
+  lifecycle {
+    replace_triggered_by = [aws_ami.example.id]
+  }
+}
+
+resource "aws_ami" "example" {
+  name = "my-ami"
+  // Other AMI configuration
+}
+
+Combining Lifecycle Rules
+=========================
+
+Lifecycle rules can be combined within the same lifecycle block to achieve more complex behaviors. Here's an example combining multiple lifecycle rules:
+
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  user_data     = "initial setup script"
+
+  lifecycle {
+    create_before_destroy = true
+    prevent_destroy       = true
+    ignore_changes        = [user_data]
+  }
+}
