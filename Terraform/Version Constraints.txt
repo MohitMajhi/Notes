@@ -1,0 +1,80 @@
+Version constraints in Terraform are used to specify which versions of providers or modules are acceptable for use in your configuration. This helps ensure compatibility and stability by preventing 
+unintended updates that might introduce breaking changes. Here’s an overview of how to use version constraints in Terraform.
+
+Specifying Provider Versions
+============================
+When configuring providers, you can specify version constraints to control which versions are allowed. This is typically done in the required_providers block in your terraform configuration block.
+under this block we can specify the versions for all the providers we want to specify.
+
+Example of Provider Version Constraints
+
+terraform {
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "1.4.0"
+    }
+  }
+}
+
+resource "local_file" "pet"{
+	filename = "/root/pets.txt" 
+	content = "Hello pet"
+}
+
+the terraform block is used to specify settings related to terraform itself
+
+
+Version Constraint Syntax
+=========================
+
+Terraform supports several version constraint syntaxes:
+
+Exact version: = 1.2.3
+----------------------
+Requires the exact version specified.
+
+version = "= 3.1.0"
+
+Greater than: > 1.2.3
+----------------------
+Requires a version greater than the specified version.
+
+version = "> 3.1.0"
+
+Less than: < 1.2.3
+------------------
+
+Requires a version less than the specified version.
+
+version = "< 3.1.0"
+
+Greater than or equal to: >= 1.2.3
+----------------------------------
+
+Requires a version greater than or equal to the specified version.
+
+version = ">= 3.1.0"
+
+Less than or equal to: <= 1.2.3
+-------------------------------
+
+Requires a version less than or equal to the specified version.
+
+version = "<= 3.1.0"
+
+Pessimistic constraint: ~> 1.2.3
+--------------------------------
+
+Allows patch and minor updates but prevents major updates that might include breaking changes.
+~> 1.2.3 is equivalent to >= 1.2.3, < 2.0.0
+~> 1.2 is equivalent to >= 1.2.0, < 2.0.0
+
+version = "~> 3.1"
+
+We can also specify it in the format 
+
+Version in range: version = ">1.2.0, < 2.0.0, !=1.4.0"
+------------------------------------------------------
+
+Here we are specifying that we need to use version greater than 1.2.0 but the version should be less than 2.0.0 and at the same it should not be 1.4.0
