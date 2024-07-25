@@ -1,0 +1,150 @@
+Terraform meta-arguments are special configuration options that can be used within resource, module, and data source blocks to modify the behavior of Terraform's resource management. 
+These meta-arguments include depends_on, count, for_each, lifecycle, and provider.
+
+=====
+count
+=====
+
+The count meta-argument in Terraform allows you to create multiple instances of a resource from a single configuration block by specifying a numerical count. This can simplify 
+your configurations and make them more dynamic and reusable.
+
+How count Works
+The count meta-argument expects an integer value and can be used to define how many instances of a resource should be created. Each instance will have a unique index starting 
+from 0, which can be referenced within the resource configuration using count.index.
+
+Basic Example:
+
+Here’s a basic example of using count to create three identical AWS EC2 instances:
+
+resource "aws_instance" "example" {
+  count         = 3
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-${count.index}"
+  }
+}
+In this example:
+
+The count is set to 3, so Terraform will create three instances.
+count.index is used to generate unique names for each instance tag (example-0, example-1, example-2).
+
+Example 2: 
+
+The below method should not be used as it will create the same file three times subsequently replacing one file after another.
+
+main.tf
+
+resource "local_file" "pet"{
+	filename = var.filename
+	count =3   -> Meta argument count whcih will create the resource thrice
+}
+
+variables.tf
+
+variable "filename"
+{
+	default = "/root/pets.txt"
+}
+
+
+A better way to use the above will be 
+-------------------------------------
+resource "local_file" "pet"{
+	filename = var.filename[count.index]
+	count =3   
+}
+
+variables.tf
+
+variable "filename"
+{
+	default = [
+		"cat.txt"
+		"dog.txt"
+		"cow.txt"
+}
+
+Here the count.index acts as a loop counter and updates every time and access the array value for the file name.
+
+And in case the length of the varable array we can define the count argument as 
+count = length(var.filename)  --> to get the array length of filename
+
+So when the apply is run it will creates the files in a loop
+
+
+But even the above mentioned approach is not ideal as:
+If any element is removed from the list all subsequent elements will get moved up by one index causing all of them to be destroyed and than created and it will consider the 
+last index as the position from which the resource was deleted. 
+
+========
+For Each
+========
+
+
+Description: Similar to count, but allows more complex, map-based iteration. It lets you create multiple instances of a resource based on a map or set of strings.
+
+Use Case: When you need to create resources based on a list or map of items, allowing for unique configurations per resource.
+
+Example:
+
+resource "aws_instance" "example" {
+  for_each = {
+    instance1 = "ami-123456"
+    instance2 = "ami-654321"
+  }
+
+  ami           = each.value
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = each.key
+  }
+}
+
+
+Example 2:
+
+The issues that we faced in using count can be resolved by using for each
+
+main.tf
+
+resource "local_file" "pet"{
+	filename = each.value    --> To access the for_each values
+	for_each = var.filename  --> This syntax can be used to iterate through the variable values    
+}
+
+variables.tf
+
+variable "filename"
+{
+	type=set(string)   --> We need to set the type to "set" or "map" as the for which only works with these types 
+	default = [
+		"cat.txt"
+		"dog.txt"
+		"cow.txt"
+}
+
+This method resolves the issues that we faced with count as it uses a map based addressing in place of index based addressing to identify the variable.
+even if there are any changes to the list of files only the resource that has been removed will be destroyed without affecting the others.
+
+in case we want the variables to use to be of list type than we can just convert the list to a set while using the variable in the resource.
+
+main.tf
+
+resource "local_file" "pet"{
+	filename = each.value    
+	for_each = toset(var.filename) --> Here toset is being used to convert the list to set.     
+}
+
+variables.tf
+
+variable "filename"
+{
+	type=list(string)   
+	default = [
+		"cat.txt"
+		"dog.txt"
+		"cow.txt"
+}
