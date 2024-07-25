@@ -1,0 +1,67 @@
+In Terraform, a data source allows you to fetch information defined outside of Terraform or defined by another Terraform configuration. Data sources are useful for getting 
+information that can be used elsewhere in your Terraform configuration. This can include data like existing resources, dynamic values, or information from external systems.
+
+Common Use Cases for Data Sources
+=================================
+Retrieving Information about Existing Resources: You might want to retrieve details about resources that were created outside of Terraform.
+Using Dynamic Values: Fetching information that might change over time, such as the latest AMI ID for a specific type of instance.
+Referencing External Systems: Accessing information from external systems like databases, cloud services, or other APIs.
+
+Example:
+--------
+resource "local_file" "pet"{
+	filename = "/root/pets.txt" --> The path where the local file resource will be created
+	content = data.local_file.dog.content   --> Accessing data which that has been retrived form another file by the data access block
+}
+
+data "local_file" "dog" -> This is a data access block to access local file data
+{
+	filename = "/root/dog.txt"  --> Path to file to access
+}
+
+Here's an example of how to define and use a data source in a Terraform configuration.
+--------------------------------------------------------------------------------------
+
+provider "aws" {
+  region = "us-west-2"
+}
+
+# Data source to fetch information about an existing AWS VPC
+data "aws_vpc" "example" {
+  filter {
+    name   = "tag:Name"
+    values = ["my-vpc"]
+  }
+}
+             ^
+			 |
+--------------------------------------------------------------------------------------------------------------------------------------------
+This block defines a data source to fetch information about an existing VPC. The filter block specifies the criteria for selecting the VPC:
+
+name = "tag:Name": This specifies that the filter should look at the tags of the VPC, specifically the tag with the key Name.
+values = ["my-vpc"]: This specifies that the tag Name should have the value my-vpc.
+Terraform will search for a VPC in the us-west-2 region that has a tag Name with the value my-vpc.
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+# Using the data source to get the VPC ID
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  subnet_id     = data.aws_vpc.example.id
+}
+
+In this example, the aws_vpc data source retrieves information about an existing VPC with the tag Name=my-vpc, and the resulting VPC ID is used to create an EC2 instance.
+
+
+==============================================
+Difference between Resource and Data Source
+==============================================
+
++----------------------------------------------+----------------------------+
+|                   Resource                   |        Data Source         |
++----------------------------------------------+----------------------------+
+| Keyword: resource                            | Keyword: data              |
+| Creates, Updates and Destroys Infrastructure | Only reads Infrastructure  |
+| Also Called Managed Resources                | Also called Data Resources |
++----------------------------------------------+----------------------------+
+
