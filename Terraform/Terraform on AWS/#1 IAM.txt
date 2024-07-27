@@ -30,4 +30,6 @@ and in that role we will be define the IAM policies to give permission to perfor
 IAM roles can also be used to
 * grant access to users from another aws account
 * provide access for applications to interact with wach other
-* allow access to people from other organization with the help of active directory  
+* allow access to people from other organization with the help of active directory
+
+If we want we can create custom roles to persorm specific actions if desired.  
