@@ -1,0 +1,63 @@
+===============================
+Setting Up AWS to use terraform
+===============================
+
+Step 1 : 
+--------
+Start by installing Terraform to Your Device
+
+Installation page --> https://developer.hashicorp.com/terraform/install?product_intent=terraform
+
+Step 2:
+-------
+AWS CLI installation
+
+Installation Page --> https://aws.amazon.com/cli/#:~:text=The%20AWS%20Command%20Line%20Interface,and%20automate%20them%20through%20scripts.
+
+Step 3:
+-------
+
+Configure and authenticate a User with AWS CLI
+
+Go to AWS and serach IAM
+Create a new User in the Users
+> Add the USER name. 
+> Depending upen need console access can be given by creatign I am user
+> Add user to a IAM group
+> In the AWS group add the required permission policies to define which services the user can have access to
+> Go To users > SElect User > Security credentials and create a new access key --> Downlaod the access key file
+
+Go to the manchine we want to use Terraform in and use command ==> aws configure -> To set up user credentials 
+
+PS C:\Users\alanm\OneDrive\Documents\Terraform> aws configure
+AWS Access Key ID [None]: xxxxxxxxxxxxxxxxxxxx                          |
+AWS Secret Access Key [None]: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  |--> This data will be found in the access key when creating it
+Default region name [None]: ap-south-1                                   --> The default region to use in aws
+Default output format [None]: json  
+
+
+This configuration can be found in the Users>usename>.aws>config
+
+This credentials will be used by terraform to authenticate on our behalf to connect to aws
+
+The AWS CLI command syntax typically follows this structure:
+------------------------------------------------------------
+
+aws <service> <operation> [parameters]
+Here's a breakdown of each component:
+
+aws: This is the command to invoke the AWS CLI.
+<service>: The specific AWS service you want to interact with (e.g., s3, ec2, iam).
+<operation>: The operation or action you want to perform (e.g., ls for listing, create-bucket for creating an S3 bucket).
+[parameters]: Additional parameters or options for the operation (e.g., resource identifiers, configurations).
+
+
+Eg: To create a user we can use the command:
+	
+	aws iam create-user --user-name alice
+	
+when the command is run it will give the details of the user in the configured output format. 
+
+it will also display the arn(amazon rsource number) which is used to identify all the resources in AWS
+
+the "aws <command> help" can be used to get details of any su command and to get details regarding the subcommand we can use "aws <command> <subcommand> help"
