@@ -1,0 +1,33 @@
+After creating a new AWS account we will receive a root account which has all the privailages to perform any actions in aws; but we should not be using the root accout to perform 
+any activities apart from creating new user accouts which will be used to perform day to day activites.
+
+These accouts will have only the bare minimum required amount of privilages. 
+
+When we create a new user we can control and configure their access to the management console and programatic access. 
+
+To access the management console the user must have a valid username and password.
+
+and AWS can also be accessed programatically throught powershell or terminal for this the user will require an Access key Id and Secret access key (These can not be used to access the console).
+
+IAM
+----
+
+When ever an id is created AWS assignes the least privilages to the user. What a user can or can not do is defined within an iam policy. 
+
+Let us say that somone needs needs all access to the resouces in AWS so they can be assigned an AdministratorAccess IAM policy to her user account.
+
+IAM policies are defined ina Json format.
+
+In the Json document we can see the resources the user can access and the actions that they can perform on the resouces.
+
+If there are multiple people in the team we can put the users in a group and attach the IAM policies to the group so that the all the users who are part of the group have that access. 
+If any specific member requires any extra access we can attach the policy to the specific member.
+
+Just like any other users any resource can not perform any actions on any other resource. For a resouce to perform action on any other resource we need to attach a role to the resource 
+and in that role we will be define the IAM policies to give permission to perform the required action. 
+
+
+IAM roles can also be used to
+* grant access to users from another aws account
+* provide access for applications to interact with wach other
+* allow access to people from other organization with the help of active directory  
