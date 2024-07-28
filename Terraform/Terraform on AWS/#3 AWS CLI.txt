@@ -61,3 +61,74 @@ when the command is run it will give the details of the user in the configured o
 it will also display the arn(amazon rsource number) which is used to identify all the resources in AWS
 
 the "aws <command> help" can be used to get details of any su command and to get details regarding the subcommand we can use "aws <command> <subcommand> help"
+
+
+
+Aws command to find the version: aws --version
+
+
+IAM Commands
+
+Create a new IAM user:
+----------------------
+aws iam create-user --user-name MyUser
+
+Attach a policy to a user:
+--------------------------
+aws iam attach-user-policy --user-name MyUser --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
+Command to Create a Group
+--------------------------
+aws iam create-group --group-name MyGroup
+
+Delete a User
+--------------
+aws iam delete-user --user-name <username>
+
+List All Users
+--------------
+aws iam list-users
+
+Attach a Policy to a User
+-------------------------
+aws iam attach-user-policy --user-name <username> --policy-arn <policy-arn>
+
+Detach a Policy from a User
+---------------------------
+aws iam detach-user-policy --user-name <username> --policy-arn <policy-arn>
+
+Add User to a Group
+-------------------
+aws iam add-user-to-group --user-name <username> --group-name <groupname>
+
+Remove User from a Group
+------------------------
+aws iam remove-user-from-group --user-name <username> --group-name <groupname>
+
+Create an Access Key for a User
+-------------------------------
+aws iam create-access-key --user-name <username>
+
+Delete an Access Key for a User
+--------------------------------
+aws iam delete-access-key --user-name <username> --access-key-id <access-key-id>
+
+Delete a Group
+--------------
+aws iam delete-group --group-name <groupname>
+
+List All Groups
+---------------
+aws iam list-groups
+
+Attach a Policy to a Group
+--------------------------
+aws iam attach-group-policy --group-name <groupname> --policy-arn <policy-arn>
+
+Detach a Policy from a Group
+----------------------------
+aws iam detach-group-policy --group-name <groupname> --policy-arn <policy-arn>
+
+List Users in a Group
+---------------------
+aws iam get-group --group-name <groupname>
