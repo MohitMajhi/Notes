@@ -1,0 +1,78 @@
+=======================================
+Creating users through terraform in AWS
+=======================================
+
+To create an AWS user through terraform we can use the following terraform configuration
+
+main.tf
+-------
+
+# Define the AWS provider
+provider "aws" {
+  region = "us-west-2"  # Change to your preferred region
+  access_key = "iufhiweuh4rft34t3t" # mentioning the access_key in the provider
+  secret_key = "ferfe/erf/reg.."  # mentioning the access_key in the provider
+}
+
+# The region, access_key and the secret key have been added to the provider so that terraform can use this details to access aws. If they are not mentioned the plan
+# phase will throw error as terraform will not be able to access the aws or the regio it is working on. If we configure the values for access_key and secret_key
+#in the aws cli we will not need to add it in the provider block 
+
+# or if we export the values for access key,secret key and region as we can completely remove the provider block as the values have been configured for them.
+# export AWS_ACCESS_KEY_ID = <access_key>
+# export AWS_SECRET_ACCESS_KEY_ID = <secret_key>
+# export AWS_REGION = <region>
+
+
+# Create IAM user
+resource "aws_iam_user" "example_user" {
+# below is the arguments for the resource
+  name = "example_user"
+  tags = { --> We can mention the tags to attach to the resource
+	Description = "Team Lead"
+  }
+}
+
+# in the above resource is the block name
+# "in aws_iam_user" aws is t provider and iam_user is the resource type
+# and admin_user is the resource name
+
+# Create IAM Policy
+
+resource "aws_iam_policy" "example_policy" {
+  name        = "example_policy"
+  description = "An example policy for demonstration purposes"
+  
+  policy = <<EOF  # --> The EOF has been used here as a HereDoc Syntax which is used to initialize multiple lines for the policy 
+	{
+		"Version": "2012-10-17",
+		"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+			"s3:ListBucket",
+			"s3:GetObject"
+			],
+			"Resource": [
+			"arn:aws:s3:::example_bucket",
+			"arn:aws:s3:::example_bucket/*"
+			]
+		}
+		]
+	}
+	EOF
+	
+  # or instead of mentioning the policy in the terraform as above we can use store the policy in a json file call it in the terraform file
+  
+  policy = file("admin_policy.json") --> This line can be used instead to call a json file where the policy is stored
+}
+
+# Attach policy to user
+resource "aws_iam_user_policy_attachment" "example_user_policy" {
+  user       = aws_iam_user.example_user.name
+  policy_arn = aws_iam_policy.example_policy.arn # The following can be used to call the arn value from the created policy and use that policy to attach to the user
+  
+  #or use to below to attach any pre-existing policy
+  
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"  # Change to desired policy
+}

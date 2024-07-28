@@ -1,0 +1,63 @@
+Amazon S3 (Simple Storage Service) buckets are containers used to store data in the form of objects (files). Here are the key points in simple terms:
+
+Storage Container: An S3 bucket is like a folder where you can store any type of data, such as photos, videos, documents, and backups (they all come under flat files). It can not store complex data such as an OS or a DB
+Globally Unique Name: Each bucket must have a unique name across all of AWS, just like how each website needs a unique name.
+Unlimited Storage: You can store an unlimited amount of data in a bucket.
+Objects and Keys: Each file you store in a bucket is called an object, and it is identified by a unique name known as a key.
+Access Control: You can control who can read or write to your bucket using permissions.
+Durability and Availability: Data stored in S3 is highly durable and available, meaning it’s safe and accessible almost all the time.
+
+Basic Operations
+Create a Bucket: You create a bucket to store your data.
+Upload an Object: You upload files to your bucket.
+Download an Object: You can download files from your bucket.
+Delete an Object: You can remove files you no longer need.
+
+When creating an S3 bucket, there are several rules and guidelines you must follow to ensure the bucket name is valid and the bucket is properly configured. Here are the key rules:
+
+Bucket Naming Rules
+Uniqueness: Bucket names must be unique across all of AWS. No two buckets can have the same name.
+Length: Bucket names must be between 3 and 63 characters long.
+Character Restrictions:
+Bucket names can only contain lowercase letters, numbers, hyphens (-), and periods (.).
+Bucket names must start and end with a lowercase letter or a number.
+No IP Address Format: Bucket names cannot be formatted as an IP address (e.g., 192.168.1.1).
+Periods and Hyphens:
+Bucket names cannot have two consecutive periods.
+Bucket names cannot contain a period adjacent to a hyphen (e.g., "my-.bucket" or "my.-bucket").
+DNS-Compatibility
+DNS-Compatible: Bucket names must be DNS-compatible to support virtual-hosted-style access. This means bucket names should be compliant with DNS naming conventions.
+Regional Considerations
+Region Selection: When creating a bucket, you must specify an AWS region where the bucket will reside. The region affects the latency of data access and storage costs.
+Bucket Location Constraint: You can specify the region in which you want to create the bucket. If you do not specify a region, the bucket will be created in the default region (usually us-east-1).
+
+Any bucket object can be accessed through the DNS url created for it. 
+
+The access to a bucket and the data in it can be controlled through 
+
+Bucket Policies: 
+
+A bucket policy is a resource-based policy that you attach to a bucket to manage permissions for the bucket and the objects stored in it.
+
+Example Bucket Policy: Allowing read access to everyone
+
+json
+Copy code
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::my-bucket/*"
+        }
+    ]
+}
+
+and 
+
+Access Control List: 
+
+These are more fine grained access given for giving access to perticular object and grant access on the object level in the bucket.  
